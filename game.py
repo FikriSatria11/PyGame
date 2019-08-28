@@ -20,11 +20,15 @@ running = True
 
 playerpos = [150, 240] #inisialisasi posisi pemain
 
+score = 0
+arrows = [] #list ofarrows
+
 #3. memanggil aset game
 #3.1 load gambar
 player = pygame.image.load("resources/images/dude.png")
 grass = pygame.image.load("resources/images/grass.png")
 castle = pygame.image.load("resources/images/castle.png")
+arrow = pygame.image.load("resources/images/bullet.png")
 
 #4. game loop
 while(running):
@@ -38,18 +42,33 @@ while(running):
         for y in range(int(height/grass.get_height()+1)):
             screen.blit(grass, (x*100,y*100))
 
-    # mebuat kastil
+    # membuat kastil
     screen.blit(castle, (0, 30))
     screen.blit(castle, (0, 135))
     screen.blit(castle, (0, 240))
     screen.blit(castle, (0, 345))
 
-    # rotasi pemain
+    # draw the player
     mouse_position = pygame.mouse.get_pos()
     angle = math.atan2(mouse_position[1] - (playerpos[1]+32), mouse_position[0] - (playerpos[0]+26))
     player_rotation = pygame.transform.rotate(player, 360 - angle * 57.29)
     new_playerpos = (playerpos[0] - player_rotation.get_rect().width / 2, playerpos[1] - player_rotation.get_rect().height / 2)
     screen.blit(player_rotation, new_playerpos)
+
+    #6.1 draw arrows
+    for bullet in arrows:
+        arrow_index = 0
+        velx=math.cos(bullet[0])*10
+        vely=math.sin(bullet[0])*10
+        bullet[1]+=velx
+        bullet[2]+=vely
+        if bullet[1] < -64 or bullet[1] > width or bullet[2] < -64 or bullet[2] > height:
+            arrows.pop(arrow_index)
+        arrow_index += 1
+        # draw the arrow
+        for projectile in arrows:
+            new_arrow = pygame.transform.rotate(arrow, 360-projectile[0]*57.29)
+            screen.blit(new_arrow, (projectile[1], projectile[2]))
 
     #7. memperbaharui tampilan
     pygame.display.flip()
@@ -60,6 +79,10 @@ while(running):
         if event.type == pygame.QUIT:
             pygame.quit()
             exit(0)
+
+        # tembak
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            arrows.append([angle, new_playerpos[0]+32, new_playerpos[1]+32])
 
         # check keydown dan keyup
         if event.type == pygame.KEYDOWN:
