@@ -81,7 +81,7 @@ while(running):
         #buat musuh baru
         enemies.append([width, randint(50, height-32)])
         #reset enemy timer to rando time
-        enemy_timer = randint(1,100)
+        enemy_timer = randint(1, 100)
     
     index = 0
     for enemy in enemies:
@@ -90,6 +90,31 @@ while(running):
         # hapus musuh saat mencapai batas layar sebelah kiri
         if enemy[0] < -64:
             enemies.pop(index)
+
+    #6.2.1 collision between enemies and castle
+    enemy_rect = pygame.Rect(enemy_img.get_rect())
+    enemy_rect.top = enemy[1] #ambil titik y
+    enemy_rect.left = enemy[0] #ambil titik x
+    # benturan musuh dengan markas kelinci
+    if enemy_rect.left < 64:
+        enemies.pop(index)
+        print("oh tidak, kita diserang!!!!!!!")
+
+    #6.2.2 check for collision between eneies and arrows
+    index_arrow = 0
+    for bullet in arrows:
+        bullet_rect = pygame.Rect(arrow.get_rect())
+        bullet_rect.left = bullet[1]
+        bullet_rect.top = bullet[2]
+        #benturan anak panah dengan musuh
+        if enemy_rect.colliderect(bullet_rect):
+            score += 1
+            enemies.pop(index)
+            arrows.pop(index_arrow)
+            print("NERAKA KAU!!!")
+            print("Score: {}".format(score))
+        index_arrow += 1
+    index += 1
 
     # gambar musuh ke layar
     for enemy in enemies:
