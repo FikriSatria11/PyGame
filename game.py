@@ -45,6 +45,20 @@ health = pygame.image.load("resources/images/health.png")
 gameover = pygame.image.load("resources/images/gameover.png")
 youwin = pygame.image.load("resources/images/youwin.png")
 
+# 3.1 - Load audio
+pygame.mixer.init()
+hit_sound = pygame.mixer.Sound("resources/audio/explode.wav")
+enemy_hit_sound = pygame.mixer.Sound("resources/audio/enemy.wav")
+shoot_sound = pygame.mixer.Sound("resources/audio/shoot.wav")
+hit_sound.set_volume(0.05)
+enemy_hit_sound.set_volume(0.05)
+shoot_sound.set_volume(0.05)
+
+# background music
+pygame.mixer.music.load("resources/audio/moonlight.wav")
+pygame.mixer.music.play(-1, 0.0)
+pygame.mixer.music.set_volume(0.25)
+
 #4. game loop
 while(running):
     
@@ -110,6 +124,7 @@ while(running):
     if enemy_rect.left < 64:
         enemies.pop(index)
         health_point -= randint(5, 20)
+        hit_sound.play()
         print("oh tidak, kita diserang!!!!!!!")
 
     #6.2.2 check for collision between eneies and arrows
@@ -123,7 +138,8 @@ while(running):
             score += 1
             enemies.pop(index)
             arrows.pop(index_arrow)
-            print("NERAKA KAU!!!")
+            enemy_hit_sound.play()
+            print("MATI KAU!!!")
             print("Score: {}".format(score))
         index_arrow += 1
     index += 1
@@ -160,6 +176,7 @@ while(running):
         # tembak
         if event.type == pygame.MOUSEBUTTONDOWN:
             arrows.append([angle, new_playerpos[0]+32, new_playerpos[1]+32])
+            shoot_sound.play()
 
         # check keydown dan keyup
         if event.type == pygame.KEYDOWN:
