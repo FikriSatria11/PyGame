@@ -1,4 +1,5 @@
 #1. import library
+import math
 import pygame
 from pygame.locals import *
 
@@ -17,7 +18,7 @@ keys = {
 
 running = True
 
-playerpos = [100, 100] #inisialisasi posisi pemain
+playerpos = [150, 240] #inisialisasi posisi pemain
 
 #3. memanggil aset game
 #3.1 load gambar
@@ -37,13 +38,18 @@ while(running):
         for y in range(int(height/grass.get_height()+1)):
             screen.blit(grass, (x*100,y*100))
 
-    #ebuat kastil
+    # mebuat kastil
     screen.blit(castle, (0, 30))
     screen.blit(castle, (0, 135))
     screen.blit(castle, (0, 240))
     screen.blit(castle, (0, 345))
 
-    screen.blit(player, playerpos)
+    # rotasi pemain
+    mouse_position = pygame.mouse.get_pos()
+    angle = math.atan2(mouse_position[1] - (playerpos[1]+32), mouse_position[0] - (playerpos[0]+26))
+    player_rotation = pygame.transform.rotate(player, 360 - angle * 57.29)
+    new_playerpos = (playerpos[0] - player_rotation.get_rect().width / 2, playerpos[1] - player_rotation.get_rect().height / 2)
+    screen.blit(player_rotation, new_playerpos)
 
     #7. memperbaharui tampilan
     pygame.display.flip()
